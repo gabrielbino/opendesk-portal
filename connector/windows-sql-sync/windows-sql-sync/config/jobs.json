@@ -1,0 +1,72 @@
+{
+  "jobs": [
+    {
+      "key": "csv-rotation-sc",
+      "enabled": true,
+      "kind": "csv-rotation",
+      "region": "SC",
+      "csvFile": "\\\\10.0.0.10\\Dados\\Repostorio\\TI\\Painel_SE_VendasDiarias\\dias_estoque_sc.csv",
+      "trackState": false,
+      "variables": {}
+    },
+    {
+      "key": "csv-rotation-rs",
+      "enabled": true,
+      "kind": "csv-rotation",
+      "region": "RS",
+      "csvFile": "\\\\10.0.0.10\\Dados\\Repostorio\\TI\\Painel_SE_VendasDiarias\\dias_estoque_rs.csv",
+      "trackState": false,
+      "variables": {}
+    },
+    {
+      "key": "vendas-sc",
+      "enabled": true,
+      "kind": "vendas",
+      "region": "SC",
+      "sqlFile": "../queries/vendas-incremental.sql",
+      "sqlFileBootstrap": "../queries/vendas.sql",
+      "trackState": true,
+      "variables": {
+        "empresa": "SC",
+        "cod_estabe": "1"
+      }
+    },
+    {
+      "key": "vendas-rs",
+      "enabled": true,
+      "kind": "vendas",
+      "region": "RS",
+      "sqlFile": "../queries/vendas-incremental.sql",
+      "sqlFileBootstrap": "../queries/vendas.sql",
+      "trackState": true,
+      "variables": {
+        "empresa": "RS",
+        "cod_estabe": "2"
+      }
+    },
+    {
+      "key": "lotes-sc",
+      "enabled": false,
+      "kind": "lotes",
+      "region": "SC",
+      "sqlFile": "../queries/lotes.sql",
+      "trackState": false,
+      "variables": {
+        "empresa": "SC",
+        "cod_estabe": "1"
+      }
+    },
+    {
+      "key": "lotes-rs",
+      "enabled": false,
+      "kind": "lotes",
+      "region": "RS",
+      "sqlFile": "../queries/lotes.sql",
+      "trackState": false,
+      "variables": {
+        "empresa": "RS",
+        "cod_estabe": "2"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `projectComments` ADD `mentions` text;

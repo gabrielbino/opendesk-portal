@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenDesk — Query API</title>
+<style>
+  :root { --bg:#0f172a; --panel:#1e293b; --line:#334155; --txt:#e2e8f0; --mut:#94a3b8; --accent:#3b82f6; --ok:#22c55e; --err:#ef4444; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Inter,Segoe UI,Arial,sans-serif; background:var(--bg); color:var(--txt); }
+  header { display:flex; align-items:center; gap:12px; padding:12px 20px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:16px; margin:0; font-weight:700; }
+  header .sp { flex:1; }
+  button { cursor:pointer; border:1px solid var(--line); background:#0b1220; color:var(--txt); border-radius:8px; padding:8px 12px; font-size:13px; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button.danger { border-color:var(--err); color:#fca5a5; }
+  input, textarea { width:100%; background:#0b1220; border:1px solid var(--line); color:var(--txt); border-radius:8px; padding:8px 10px; font-size:13px; font-family:inherit; }
+  textarea { font-family:ui-monospace,Consolas,monospace; min-height:140px; resize:vertical; }
+  .wrap { display:grid; grid-template-columns:280px 1fr; height:calc(100vh - 53px); }
+  .list { border-right:1px solid var(--line); overflow:auto; padding:10px; }
+  .item { padding:9px 10px; border-radius:8px; cursor:pointer; font-size:13px; }
+  .item:hover { background:var(--panel); }
+  .item.active { background:var(--panel); outline:1px solid var(--accent); }
+  .item small { display:block; color:var(--mut); }
+  .editor { overflow:auto; padding:18px 22px; }
+  .row { margin-bottom:12px; }
+  label { display:block; font-size:12px; color:var(--mut); margin-bottom:4px; }
+  .actions { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th, td { border:1px solid var(--line); padding:5px 8px; text-align:left; white-space:nowrap; }
+  th { background:var(--panel); position:sticky; top:0; }
+  .result { overflow:auto; max-height:40vh; border:1px solid var(--line); border-radius:8px; }
+  .msg { font-size:13px; padding:8px 10px; border-radius:8px; margin:8px 0; }
+  .msg.ok { background:rgba(34,197,94,.12); color:#86efac; }
+  .msg.err { background:rgba(239,68,68,.12); color:#fca5a5; }
+  #login { max-width:340px; margin:80px auto; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px; }
+  #login h2 { margin:0 0 14px; font-size:18px; }
+  .hint { color:var(--mut); font-size:11px; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h2>OpenDesk · Query API</h2>
+  <div class="row"><label>Usuário</label><input id="u" value="admin" /></div>
+  <div class="row"><label>Senha</label><input id="p" type="password" value="admin" /></div>
+  <button class="primary" style="width:100%" onclick="login()">Entrar</button>
+  <div id="loginMsg"></div>
+  <p class="hint">Admin autora/testa queries. O portal usa credenciais próprias (QAPI_USER).</p>
+</div>
+
+<div id="appHeader" style="display:none">
+  <header>
+    <h1>OpenDesk · Query API</h1>
+    <span class="hint" id="who"></span>
+    <span class="sp"></span>
+    <button onclick="novaQuery()">+ Nova query</button>
+    <button onclick="logout()">Sair</button>
+  </header>
+  <div class="wrap">
+    <div class="list" id="list"></div>
+    <div class="editor">
+      <div class="row"><label>Chave (identificador chamado pelo portal)</label><input id="chave" placeholder="ex.: venda_por_dia" /></div>
+      <div class="row"><label>Descrição</label><input id="descricao" placeholder="opcional" /></div>
+      <div class="row"><label>SQL — use <code>:parametro</code> para valores do chamador (bind seguro)</label>
+        <textarea id="sql" placeholder="SELECT * FROM vendas WHERE cod_estabe = :cod_estabe"></textarea>
+        <div class="hint">Para listas em <code>IN (:lista)</code>, passe o parâmetro como CSV ("1,2,3") — vira array automaticamente.</div>
+      </div>
+      <div class="row"><label>Parâmetros de teste (JSON)</label>
+        <textarea id="params" style="min-height:70px" placeholder='{ "cod_estabe": "1", "lista_produtos": "1,2,3" }'></textarea>
+      </div>
+      <div class="actions">
+        <button class="primary" onclick="testar()">▶ Testar</button>
+        <button onclick="salvar()">💾 Salvar</button>
+        <button class="danger" onclick="excluir()">🗑 Excluir</button>
+      </div>
+      <div id="msg"></div>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let token = null, role = null, queries = [], sel = null;
+const $ = (id) => document.getElementById(id);
+
+async function api(path, opts = {}) {
+  const r = await fetch(path, {
+    ...opts,
+    headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}), ...(opts.headers||{}) },
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.erro || ("HTTP " + r.status));
+  return data;
+}
+
+async function login() {
+  try {
+    const d = await api("/api/auth/login", { method:"POST", body: JSON.stringify({ usuario:$("u").value, senha:$("p").value }) });
+    token = d.token; role = "admin";
+    $("login").style.display = "none";
+    $("appHeader").style.display = "block";
+    $("who").textContent = "expira " + d.expiraEm;
+    await carregar();
+  } catch (e) { $("loginMsg").innerHTML = '<div class="msg err">'+e.message+'</div>'; }
+}
+function logout(){ token=null; location.reload(); }
+
+async function carregar() {
+  const d = await api("/admin/queries");
+  queries = d.queries || [];
+  renderList();
+}
+function renderList() {
+  $("list").innerHTML = queries.map((q,i) =>
+    `<div class="item ${sel===i?'active':''}" onclick="abrir(${i})"><strong>${q.chave}</strong><small>${q.descricao||''}</small></div>`
+  ).join("") || '<p class="hint">Nenhuma query. Clique em "+ Nova query".</p>';
+}
+function abrir(i) {
+  sel = i; const q = queries[i];
+  $("chave").value = q.chave; $("descricao").value = q.descricao||""; $("sql").value = q.sql_text||"";
+  $("msg").innerHTML=""; $("result").innerHTML=""; renderList();
+}
+function novaQuery(){ sel=null; $("chave").value=""; $("descricao").value=""; $("sql").value=""; $("params").value=""; $("msg").innerHTML=""; $("result").innerHTML=""; renderList(); }
+
+function parseParams(){ const t=$("params").value.trim(); if(!t) return {}; return JSON.parse(t); }
+function renderResult(dados,total){
+  if(!Array.isArray(dados)||!dados.length){ $("result").innerHTML='<p class="hint" style="padding:8px">Sem linhas.</p>'; return; }
+  const cols=Object.keys(dados[0]);
+  $("result").innerHTML = `<table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>`+
+    `<tbody>${dados.slice(0,100).map(r=>`<tr>${cols.map(c=>`<td>${r[c]===null?'<i style="color:#64748b">null</i>':String(r[c])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  $("msg").innerHTML = `<div class="msg ok">${total??dados.length} linha(s) — exibindo até 100.</div>`;
+}
+async function testar(){
+  try{ const d = await api("/admin/test",{method:"POST",body:JSON.stringify({ sql_text:$("sql").value, parametros:parseParams() })}); renderResult(d.dados,d.total); }
+  catch(e){ $("msg").innerHTML='<div class="msg err">'+e.message+'</div>'; }
+}
+async function salvar(){
+  const chave=$("chave").value.trim(); if(!chave){ $("msg").innerHTML='<div class="msg err">informe a chave</div>'; return; }
+  try{ await api("/admin/queries/"+encodeURIComponent(chave),{method:"PUT",body:JSON.stringify({ descricao:$("descricao").value, sql_text:$("sql").value })});
+    $("msg").innerHTML='<div class="msg ok">Salvo.</div>'; await carregar(); }
+  catch(e){ $("msg").innerHTML='<div class="msg err">'+e.message+'</div>'; }
+}
+async function excluir(){
+  const chave=$("chave").value.trim(); if(!chave) return;
+  if(!confirm("Excluir a query '"+chave+"'?")) return;
+  try{ await api("/admin/queries/"+encodeURIComponent(chave),{method:"DELETE"}); novaQuery(); await carregar(); }
+  catch(e){ $("msg").innerHTML='<div class="msg err">'+e.message+'</div>'; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+ALTER TABLE `purchasing_tasks` MODIFY COLUMN `tags` text;

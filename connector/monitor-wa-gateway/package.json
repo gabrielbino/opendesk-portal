@@ -1,0 +1,19 @@
+{
+  "name": "monitor-wa-gateway",
+  "version": "1.0.0",
+  "description": "WA Gateway (VM) — submódulo Monitor de Integrações do portal OpenDesk. Multi-conta whatsapp-web.js: pareia por QR, drena a fila e envia os alertas.",
+  "type": "module",
+  "main": "index.mjs",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.34.0",
+    "qrcode": "^1.5.4",
+    "dotenv": "^17.0.0"
+  }
+}

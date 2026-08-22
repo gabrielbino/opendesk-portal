@@ -1,0 +1,22 @@
+{
+  "name": "bot-envio-parcial",
+  "version": "3.0.0",
+  "description": "Bot WhatsApp — Panorama Pedidos Sem ST | sincroniza com o portal OpenDesk via /api/parcial/*",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "pm2": "pm2 start ecosystem.config.js"
+  },
+  "dependencies": {
+    "mssql": "^12.5.5",
+    "node-cron": "^4.2.1",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "1.34.7",
+    "dotenv": "^17.0.0"
+  }
+}

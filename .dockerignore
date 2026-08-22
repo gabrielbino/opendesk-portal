@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.env
+.env.*
+data
+.wwebjs_auth
+connector/*/node_modules
+services/*/node_modules
+**/.wwebjs_auth
+*.log
+.claude

@@ -1,0 +1,27 @@
+[Unit]
+# ─────────────────────────────────────────────────────────────────────────────
+# Timer do backup de pedidos (OpenDesk) — modelo de RETENÇÃO.
+#
+# Dispara o job em DIAS ÚTEIS (seg–sex) às 06:00 (fuso da VM = America/Sao_Paulo), antes do expediente.
+# Com "manter 1 dia" no painel, a pasta fica só com o dia corrente — ex.: na segunda arquiva a sexta.
+# Persistent=true → se a VM estava desligada na hora, roda assim que ligar.
+#
+# COMO AJUSTAR O AGENDAMENTO (é aqui que se muda a frequência/horário):
+#   • Dias úteis 06:00 (padrão) → OnCalendar=Mon..Fri *-*-* 06:00:00
+#   • Todo dia 06:00            → OnCalendar=*-*-* 06:00:00
+#   • Toda segunda 06:00        → OnCalendar=Mon *-*-* 06:00:00
+#   Depois: `sudo systemctl daemon-reload && sudo systemctl restart backup-pedidos.timer`.
+#
+# Pausar     → `sudo systemctl disable --now backup-pedidos.timer`
+# Rodar já   → `sudo systemctl start backup-pedidos.service`  (ou `node index.mjs --corte AAAA-MM-DD`)
+# Conferir   → `systemctl list-timers backup-pedidos.timer`
+# ─────────────────────────────────────────────────────────────────────────────
+Description=Timer do backup de pedidos - Monitor de Pedidos (OpenDesk)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 06:00:00
+Persistent=true
+Unit=backup-pedidos.service
+
+[Install]
+WantedBy=timers.target

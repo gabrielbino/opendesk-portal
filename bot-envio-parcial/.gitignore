@@ -1,0 +1,9 @@
+node_modules/
+.wwebjs_auth/
+.wwebjs_cache/
+.painel-tmp/
+painel_output.png
+painel_*.json
+painel_*.png
+.env
+*.log

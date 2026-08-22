@@ -1,0 +1,17 @@
+{
+  "name": "coletor-monitor-arquivos",
+  "version": "1.0.0",
+  "description": "Coletor de arquivos (VM) — submódulo Monitor de Integrações do portal OpenDesk. Varre pastas e publica snapshot em /api/monitor-arquivos/*.",
+  "type": "module",
+  "main": "index.mjs",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.0"
+  }
+}

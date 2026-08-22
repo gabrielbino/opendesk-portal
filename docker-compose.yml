@@ -1,0 +1,103 @@
+# OpenDesk — stack de produto "na caixa".
+#   docker compose up -d            → sobe db + query-api + portal (bootstrap automático)
+#   docker compose down             → para tudo (mantém os dados)
+#   docker compose down -v          → zera os dados (re-bootstrap no próximo up)
+#
+# Os AGENTES de borda (WhatsApp gateway e coletor de arquivos) rodam como processos
+# apontando para o portal — ver connector/monitor-wa-gateway e connector/monitor-arquivos.
+services:
+  db:
+    image: mysql:8
+    container_name: opendesk-dev-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: dev
+      MYSQL_DATABASE: opendesk        # init roda com este banco como padrão
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    ports:
+      - "3306:3306"
+    volumes:
+      - opendesk_mysql_data:/var/lib/mysql
+      # Bootstrap AUTOMÁTICO (só roda quando o volume está vazio — clone novo):
+      - ./scripts/bootstrap/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./scripts/bootstrap/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./services/demo-erp/seed.sql:/docker-entrypoint-initdb.d/03-demo-erp.sql:ro
+      - ./services/demo-erp/queries-seed.sql:/docker-entrypoint-initdb.d/04-demo-queries.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pdev"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  query-api:
+    build: ./services/query-api
+    restart: unless-stopped
+    environment:
+      PORT: "4000"
+      QAPI_USER: portal
+      QAPI_PASSWORD: portal-dev
+      QAPI_ADMIN_USER: admin
+      QAPI_ADMIN_PASSWORD: admin
+      JWT_SECRET: troque-em-producao
+      TARGET_DB_URL: mysql://root:dev@db:3306/demo_erp
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  portal:
+    build:
+      context: .
+      args:
+        VITE_APP_ID: opendesk-portal
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: mysql://root:dev@db:3306/opendesk
+      JWT_SECRET: troque-em-producao
+      VITE_APP_ID: opendesk-portal
+      STORAGE_DRIVER: local
+      LOCAL_STORAGE_DIR: /data/uploads
+      PUBLIC_BASE_URL: http://localhost:3000
+      ERP_API_URL: http://query-api:4000
+      ERP_API_USER: portal
+      ERP_API_SENHA: portal-dev
+      MONITOR_AGENTE_TOKEN: dev-wa-token
+      CRON_SHARED_TOKEN: dev-cron-token
+    ports:
+      - "3000:3000"
+    volumes:
+      - opendesk_uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      query-api:
+        condition: service_started
+
+  # One-shot: espera o portal e dispara os syncs uma vez, para os painéis baseados
+  # em sync (Rupturas/Superestocados/Validades/Pescador) já subirem populados.
+  sync-init:
+    image: curlimages/curl:8.11.0
+    depends_on:
+      portal:
+        condition: service_started
+    environment:
+      CRON_SHARED_TOKEN: dev-cron-token
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "aguardando o portal..."
+        until curl -sf http://portal:3000 >/dev/null 2>&1; do sleep 3; done
+        for job in rupturas-sync superestocados-produtos-sync superestocados-vendas-sync validades-curtas-sync pescador-sync; do
+          echo "→ sync $job"
+          curl -s -X POST "http://portal:3000/api/scheduled/$job" \
+            -H "Authorization: Bearer $$CRON_SHARED_TOKEN" -H "Content-Type: application/json" >/dev/null || true
+        done
+        echo "syncs concluídos."
+    restart: "no"
+
+volumes:
+  opendesk_mysql_data:
+  opendesk_uploads:

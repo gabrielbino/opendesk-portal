@@ -1,0 +1,27 @@
+[Unit]
+# ─────────────────────────────────────────────────────────────────────────────
+# Backup de pedidos "Monitor de Pedidos" (OpenDesk) — serviço systemd (oneshot).
+# Roda na VM srvappapi. É disparado pelo backup-pedidos.timer (padrão: seg 06:00). Mantém na
+# pasta só os últimos N dias (config no painel) e arquiva o resto. Também pode ser disparado
+# manual: `sudo systemctl start backup-pedidos.service`.
+#
+# Os placeholders __USER__ / __DIR__ / __NODE__ são preenchidos pelo install-timer.sh.
+#
+# ⚠️ Este job ESCREVE no share. Exige o mount RW (ex.: /mnt/erp-rw). Descomente e
+# ajuste para o job só rodar com o mount montado:
+#   RequiresMountsFor=/mnt/erp-rw
+# ─────────────────────────────────────────────────────────────────────────────
+Description=Backup de pedidos (retenção semanal) - Monitor de Pedidos (OpenDesk)
+After=network-online.target
+Wants=network-online.target
+# RequiresMountsFor=/mnt/erp-rw
+
+[Service]
+Type=oneshot
+User=__USER__
+WorkingDirectory=__DIR__
+ExecStart=__NODE__ index.mjs
+StandardOutput=journal
+StandardError=journal
+Environment=NODE_ENV=production
+Environment=TZ=America/Sao_Paulo

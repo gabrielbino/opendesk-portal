@@ -1,0 +1,35 @@
+[Unit]
+# ─────────────────────────────────────────────────────────────────────────────
+# Coletor de arquivos "Monitor de Pedidos" (OpenDesk) — serviço systemd (Linux).
+# Roda na VM srvappapi. Restart=always faz o coletor voltar sozinho após queda.
+#
+# Os placeholders __USER__ / __COLETORDIR__ / __NODE__ são preenchidos pelo
+# install-service.sh. Para instalar manualmente, edite-os e copie este arquivo
+# para /etc/systemd/system/coletor-arquivos.service.
+#
+# DICA (mount do 202): se as pastas monitoradas estão num ponto de montagem
+# (ex.: /mnt/ftp202 via CIFS/curlftpfs), descomente e ajuste a linha abaixo para
+# o coletor só subir depois do mount montar:
+#   RequiresMountsFor=/mnt/ftp202
+# ─────────────────────────────────────────────────────────────────────────────
+Description=Coletor de arquivos - Monitor de Pedidos (OpenDesk)
+After=network-online.target
+Wants=network-online.target
+# RequiresMountsFor=/mnt/ftp202
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__COLETORDIR__
+ExecStart=__NODE__ index.mjs
+# Reinicia em qualquer saída (queda ou SIGTERM), após 5s.
+Restart=always
+RestartSec=5
+# Logs vão para o journald: journalctl -u coletor-arquivos -f
+StandardOutput=journal
+StandardError=journal
+Environment=NODE_ENV=production
+Environment=TZ=America/Sao_Paulo
+
+[Install]
+WantedBy=multi-user.target

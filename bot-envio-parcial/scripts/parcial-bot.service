@@ -1,0 +1,30 @@
+[Unit]
+# ─────────────────────────────────────────────────────────────────────────────
+# Bot WhatsApp "Envio de Parcial" (OpenDesk) — serviço systemd (Linux headless)
+# Equivalente Linux da Tarefa Agendada do Windows. Restart=always faz o bot
+# voltar sozinho após queda OU após o "Reiniciar processo" do portal
+# (process.exit) — sem depender de wrapper.
+#
+# Os placeholders __USER__ / __BOTDIR__ / __NODE__ são preenchidos pelo
+# install-service.sh. Para instalar manualmente, edite-os e copie este arquivo
+# para /etc/systemd/system/parcial-bot.service.
+# ─────────────────────────────────────────────────────────────────────────────
+Description=Bot WhatsApp - Envio de Parcial (OpenDesk)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__BOTDIR__
+ExecStart=__NODE__ index.js
+# Reinicia em qualquer saída (queda ou hard-restart do portal), após 5s.
+Restart=always
+RestartSec=5
+# Logs vão para o journald: journalctl -u parcial-bot -f
+StandardOutput=journal
+StandardError=journal
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,64 @@
+{
+  "jobs": [
+    {
+      "key": "medicamentos-sc",
+      "enabled": true,
+      "kind": "medicamentos",
+      "region": "SC",
+      "sqlFile": "../queries/medicamentos_sc.sql",
+      "trackState": false,
+      "variables": {
+        "empresa": "SC",
+        "cod_estabe": "1"
+      }
+    },
+    {
+      "key": "vendas-sc",
+      "enabled": true,
+      "kind": "vendas",
+      "region": "SC",
+      "sqlFile": "../queries/vendas.sql",
+      "trackState": true,
+      "variables": {
+        "empresa": "SC",
+        "cod_estabe": "1"
+      }
+    },
+    {
+      "key": "vendas-rs",
+      "enabled": true,
+      "kind": "vendas",
+      "region": "RS",
+      "sqlFile": "../queries/vendas.sql",
+      "trackState": true,
+      "variables": {
+        "empresa": "RS",
+        "cod_estabe": "2"
+      }
+    },
+    {
+      "key": "lotes-sc",
+      "enabled": true,
+      "kind": "lotes",
+      "region": "SC",
+      "sqlFile": "../queries/lotes.sql",
+      "trackState": true,
+      "variables": {
+        "empresa": "SC",
+        "cod_estabe": "1"
+      }
+    },
+    {
+      "key": "lotes-rs",
+      "enabled": true,
+      "kind": "lotes",
+      "region": "RS",
+      "sqlFile": "../queries/lotes.sql",
+      "trackState": true,
+      "variables": {
+        "empresa": "RS",
+        "cod_estabe": "2"
+      }
+    }
+  ]
+}

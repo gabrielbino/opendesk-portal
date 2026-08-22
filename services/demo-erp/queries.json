@@ -1,0 +1,37 @@
+[
+  {
+    "chave": "venda_por_dia",
+    "descricao": "Movimentação de venda por dia (parâmetros: cod_estabe, lista_produtos CSV).",
+    "sql_text": "SELECT cod_estabe, cod_produto, descricao_produto, data, qtd_venda, quantidade_saida, quantidade_entrada FROM erp_vendas WHERE cod_estabe = :cod_estabe AND cod_produto IN (:lista_produtos) ORDER BY cod_produto, data"
+  },
+  {
+    "chave": "dia_estoque_sc",
+    "descricao": "Universo de produtos ativos — estabelecimento SC (cod_estabe=1).",
+    "sql_text": "SELECT codigo AS `Código`, fornecedor AS `Fornecedor`, fabricante AS `Fabricante`, nome AS `Nome Produto`, categoria AS `Categoria`, dias_estoque AS `Dias de Estoque (Unidades)`, qtd_estoque AS `Qtd em Estoque`, venda_media_mes AS `Qtd Venda Média Mês`, custo_medio_liquido AS `Custo Medio Liquido`, valor_estoque_custo AS `Valor Estoque Custo`, data_ultima_compra AS `Data Última Compra`, lote AS `Lote`, validade_lote AS `Validade Lote`, estoque_lote AS `Estoque Lote`, data_ultima_transferencia AS `Data Ultima Transferencia`, qtd_venda_mes_atual AS `Qtd Venda Mes Atual`, qtd_venda_mes_anterior AS `Qtd Venda Mes Anterior`, qtd_venda_2m_anterior AS `Qtd Venda 2 Meses Anterior`, qtd_projetado_mes_atual AS `Qtd Projetado Mes Atual`, preco_politica AS `Preço Politica` FROM erp_produtos WHERE cod_estabe = 1"
+  },
+  {
+    "chave": "dia_estoque_rs",
+    "descricao": "Universo de produtos ativos — estabelecimento RS (cod_estabe=2).",
+    "sql_text": "SELECT codigo AS `Código`, fornecedor AS `Fornecedor`, fabricante AS `Fabricante`, nome AS `Nome Produto`, categoria AS `Categoria`, dias_estoque AS `Dias de Estoque (Unidades)`, qtd_estoque AS `Qtd em Estoque`, venda_media_mes AS `Qtd Venda Média Mês`, custo_medio_liquido AS `Custo Medio Liquido`, valor_estoque_custo AS `Valor Estoque Custo`, data_ultima_compra AS `Data Última Compra`, lote AS `Lote`, validade_lote AS `Validade Lote`, estoque_lote AS `Estoque Lote`, data_ultima_transferencia AS `Data Ultima Transferencia`, qtd_venda_mes_atual AS `Qtd Venda Mes Atual`, qtd_venda_mes_anterior AS `Qtd Venda Mes Anterior`, qtd_venda_2m_anterior AS `Qtd Venda 2 Meses Anterior`, qtd_projetado_mes_atual AS `Qtd Projetado Mes Atual`, preco_politica AS `Preço Politica` FROM erp_produtos WHERE cod_estabe = 2"
+  },
+  {
+    "chave": "qtd_pedido_layout",
+    "descricao": "Pedidos ACEITOS do dia agregados por rede/layout e estado.",
+    "sql_text": "SELECT layout AS `Layout`, estado, SUM(qt_ped) AS Qt_Ped, SUM(vl_pedido) AS Vl_pedido, MAX(dt_hora) AS DT_HORA FROM erp_pedidos_layout WHERE status = 'aceito' GROUP BY layout, estado"
+  },
+  {
+    "chave": "qtd_pedido_cortado_layout",
+    "descricao": "Pedidos CORTADOS do dia por rede/layout e estado.",
+    "sql_text": "SELECT layout AS `Layout`, estado AS Estado, SUM(qt_ped) AS Qt_Ped, SUM(vl_pedido) AS VALOR, MAX(dt_hora) AS DT_HORA FROM erp_pedidos_layout WHERE status = 'cortado' GROUP BY layout, estado"
+  },
+  {
+    "chave": "qtd_pedido_dia",
+    "descricao": "TOTAL de pedidos do dia (todos os status) por rede/layout e estado.",
+    "sql_text": "SELECT layout AS `Layout`, estado AS Estado, SUM(qt_ped) AS Qt_Ped FROM erp_pedidos_layout GROUP BY layout, estado"
+  },
+  {
+    "chave": "grupo_clientes_cnpj",
+    "descricao": "Clientes de associativismo por CNPJ (1 grupo por cliente).",
+    "sql_text": "SELECT cnpj AS Cgc_Cpf, cod_grupo AS Cod_GrpCli, des_grupo AS Des_GrpCli FROM erp_grupo_clientes"
+  }
+]

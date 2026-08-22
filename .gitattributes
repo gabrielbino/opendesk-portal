@@ -1,0 +1,4 @@
+# Normalização de fim de linha.
+# Scripts de shell SEMPRE em LF: com CRLF (Windows) o shebang quebra na VM Linux
+# ("command not found" / "bad interpreter"). Garante que o git sempre entrega LF no checkout.
+*.sh text eol=lf

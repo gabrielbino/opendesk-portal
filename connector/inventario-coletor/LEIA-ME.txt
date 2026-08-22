@@ -1,0 +1,44 @@
+========================================================
+ COLETOR DE INVENTÁRIO - NetMap
+========================================================
+
+O QUE É
+-------
+Um programinha que lê as informações do computador (nome, patrimônio,
+número de série, MAC, IP, sistema operacional, usuário logado, CPU/RAM e
+monitores conectados) e salva num arquivo JSON dentro da pasta "coletas",
+aqui mesmo no pendrive. Depois é só importar esses arquivos no NetMap.
+
+Não instala nada e não precisa de permissão de administrador.
+
+
+COMO USAR
+---------
+1. Copie ESTA PASTA inteira (coletor) para um pendrive.
+2. Espete o pendrive no computador que você quer inventariar.
+3. Dê um DUPLO-CLIQUE no arquivo "coletar.bat".
+   - Vai abrir uma janela preta, coletar os dados e mostrar um resumo.
+   - Se o Windows perguntar algo sobre "Windows protegeu o computador",
+     clique em "Mais informações" > "Executar assim mesmo".
+4. Repita em quantas máquinas quiser. Cada uma gera um arquivo
+   "NOME-DO-PC.json" dentro da pasta "coletas".
+5. Leve o pendrive de volta e, no NetMap, use:
+   Importar (ícone de seta para cima)  >  "Coletas do pendrive (.json)"
+   e selecione todos os arquivos da pasta "coletas" de uma vez.
+
+Os computadores entram no mapa "sem setor" (soltos). Aí é só arrastar
+cada um para o setor/área correta e completar o que faltar (por exemplo,
+o departamento e o patrimônio, caso o computador não tenha etiqueta de
+patrimônio no BIOS).
+
+
+OBSERVAÇÕES
+-----------
+- O pendrive NÃO roda sozinho ao ser espetado: o Windows bloqueia isso por
+  segurança. É preciso dar o duplo-clique no "coletar.bat".
+- Rodar de novo na mesma máquina sobrescreve o arquivo dela (mantém 1 por PC).
+- Alguns dados podem vir vazios dependendo do equipamento (por exemplo,
+  patrimônio, quando o fabricante não gravou etiqueta no BIOS) - basta
+  preencher no NetMap depois.
+- Nobreak, estabilizador e leitor de código de barras não são detectáveis
+  automaticamente; adicione-os manualmente no NetMap como periféricos.

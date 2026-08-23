@@ -1,0 +1,30 @@
+# Override de PRODUÇÃO (demo público). Use junto do compose base:
+#
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
+#
+# O compose base já publica db/query-api/portal apenas em 127.0.0.1 (nunca na internet).
+# Este override só adiciona o Caddy (HTTPS) na frente do portal e injeta os segredos de prod.
+services:
+  portal:
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no .env}
+      PUBLIC_BASE_URL: ${SITE_URL:?defina SITE_URL no .env}
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?defina SITE_ADDRESS no .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - portal
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -15,7 +15,7 @@ services:
       MYSQL_DATABASE: opendesk        # init roda com este banco como padrão
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"   # só localhost (dev/host); nunca exposto na internet
     volumes:
       - opendesk_mysql_data:/var/lib/mysql
       # Bootstrap AUTOMÁTICO (só roda quando o volume está vazio — clone novo):
@@ -41,7 +41,7 @@ services:
       JWT_SECRET: troque-em-producao
       TARGET_DB_URL: mysql://root:dev@db:3306/demo_erp
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"   # UI admin só no localhost; em prod não vai pra internet
     depends_on:
       db:
         condition: service_healthy
@@ -67,7 +67,7 @@ services:
       MONITOR_AGENTE_TOKEN: dev-wa-token
       CRON_SHARED_TOKEN: dev-cron-token
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"   # em prod o acesso público é via Caddy (deploy/)
     volumes:
       - opendesk_uploads:/data/uploads
     depends_on:

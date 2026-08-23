@@ -1,0 +1,8 @@
+# Caddy — proxy reverso com HTTPS automático (Let's Encrypt).
+# SITE_ADDRESS vem do .env (ex.: opendesk.duckdns.org). Caddy emite e renova o
+# certificado sozinho, desde que o domínio aponte para o IP da VM e as portas 80/443
+# estejam abertas.
+{$SITE_ADDRESS} {
+	encode zstd gzip
+	reverse_proxy portal:3000
+}

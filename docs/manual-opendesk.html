@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Manual do OpenDesk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#f4f6fb; --surface:#ffffff; --surface-2:#eef1f8; --code-bg:#f1f4fa;
+    --ink:#141922; --muted:#586376; --faint:#8b95a7; --border:#dde3ee;
+    --accent:#1d6fd8; --accent-2:#0b4aa0; --accent-soft:#e4eefc;
+    --tip:#0e9f6e; --tip-soft:#e3f6ee; --warn:#b7791f; --warn-soft:#fbf1dd;
+    --shadow:0 1px 2px rgba(20,25,34,.05),0 8px 24px rgba(20,25,34,.06);
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+    --display:"Bricolage Grotesque",var(--sans);
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme:dark){
+      --bg:#0e1219; --surface:#141a24; --surface-2:#1a2130; --code-bg:#111722;
+      --ink:#e6ecf5; --muted:#9aa6b8; --faint:#6b7688; --border:#263143;
+      --accent:#5b9bf0; --accent-2:#8fbcf6; --accent-soft:#16233a;
+      --tip:#37c491; --tip-soft:#0f2a22; --warn:#e0a943; --warn-soft:#2a2211;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1219; --surface:#141a24; --surface-2:#1a2130; --code-bg:#111722;
+    --ink:#e6ecf5; --muted:#9aa6b8; --faint:#6b7688; --border:#263143;
+    --accent:#5b9bf0; --accent-2:#8fbcf6; --accent-soft:#16233a;
+    --tip:#37c491; --tip-soft:#0f2a22; --warn:#e0a943; --warn-soft:#2a2211;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);
+    border:1px solid var(--border);border-radius:5px;padding:.08em .38em;color:var(--ink)}
+  .layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:0;max-width:1320px;margin:0 auto}
+  /* Sidebar */
+  aside{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+    border-right:1px solid var(--border);background:var(--surface);padding:26px 20px 40px}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .brand .mark{width:40px;height:40px;border-radius:11px;background:var(--accent);
+    display:grid;place-items:center;flex:none}
+  .brand .mark span{width:20px;height:20px;border-radius:50%;border:5px solid #fff}
+  .brand b{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:block;line-height:1.1}
+  .brand small{color:var(--muted);font-size:12px;font-family:var(--mono)}
+  nav.toc a{display:block;color:var(--muted);padding:7px 12px;border-radius:8px;
+    font-size:14px;font-weight:500;border-left:2px solid transparent;margin:1px 0}
+  nav.toc a .n{font-family:var(--mono);color:var(--faint);font-size:12px;margin-right:9px}
+  nav.toc a:hover{background:var(--surface-2);color:var(--ink);text-decoration:none}
+  nav.toc a.active{background:var(--accent-soft);color:var(--accent-2);border-left-color:var(--accent);font-weight:600}
+  .themetog{margin-top:20px;width:100%;font-family:var(--mono);font-size:12px;cursor:pointer;
+    background:var(--surface-2);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:9px}
+  .themetog:hover{color:var(--ink)}
+  /* Main */
+  main{padding:46px 52px 120px;min-width:0}
+  .hero{margin-bottom:38px}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2);font-weight:600}
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,4vw,2.9rem);line-height:1.04;
+    letter-spacing:-.02em;margin:.28em 0 .28em;text-wrap:balance}
+  .lede{font-size:1.12rem;color:var(--muted);max-width:64ch}
+  section{scroll-margin-top:24px;padding-top:34px;margin-top:34px;border-top:1px solid var(--border)}
+  section:first-of-type{border-top:0;margin-top:26px}
+  h2{font-family:var(--display);font-weight:700;font-size:1.72rem;letter-spacing:-.015em;margin:0 0 .5em;
+    display:flex;align-items:baseline;gap:.5em;text-wrap:balance}
+  h2 .n{font-family:var(--mono);font-size:1rem;color:var(--accent);font-weight:600}
+  h3{font-family:var(--display);font-weight:700;font-size:1.16rem;margin:1.7em 0 .5em;letter-spacing:-.01em}
+  p,li{max-width:70ch}
+  ul,ol{padding-left:1.25em}
+  li{margin:.28em 0}
+  strong{font-weight:600}
+  .prose-narrow{max-width:72ch}
+  /* Cards / callouts */
+  .grid{display:grid;gap:16px}
+  .cols-2{grid-template-columns:repeat(2,1fr)}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .card h4{margin:0 0 .3em;font-family:var(--display);font-size:1.02rem;font-weight:700}
+  .card p{margin:.2em 0;color:var(--muted);font-size:.94rem}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--accent-2);background:var(--accent-soft);
+    padding:2px 7px;border-radius:5px;display:inline-block}
+  .callout{border:1px solid var(--border);border-left-width:4px;border-radius:10px;padding:14px 18px;margin:18px 0;background:var(--surface)}
+  .callout p{margin:.2em 0}
+  .callout .lbl{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:.3em}
+  .callout.note{border-left-color:var(--accent)}.callout.note .lbl{color:var(--accent-2)}
+  .callout.tip{border-left-color:var(--tip);background:var(--tip-soft)}.callout.tip .lbl{color:var(--tip)}
+  .callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}.callout.warn .lbl{color:var(--warn)}
+  /* Code blocks */
+  .code{position:relative;margin:16px 0;background:var(--code-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .code .bar{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+  .code .bar span{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .code button{font-family:var(--mono);font-size:11px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 9px}
+  .code button:hover{color:var(--ink);border-color:var(--accent)}
+  .code pre{margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--ink)}
+  .code pre .c{color:var(--faint)} /* comment */
+  .code pre .k{color:var(--accent-2)} /* keyword/path */
+  /* Tables */
+  .tbl{overflow-x:auto;margin:16px 0;border:1px solid var(--border);border-radius:12px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--surface-2);font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+  td code{white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  /* Figures */
+  figure{margin:22px 0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+  figure svg{width:100%;height:auto;color:var(--ink)}
+  figcaption{font-size:.9rem;color:var(--muted);margin-top:12px;font-style:italic}
+  .path{font-family:var(--mono);color:var(--accent-2);font-weight:600}
+  .steps{counter-reset:s;list-style:none;padding:0}
+  .steps li{counter-increment:s;position:relative;padding-left:44px;margin:14px 0;max-width:72ch}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:-2px;width:29px;height:29px;border-radius:9px;
+    background:var(--accent-soft);color:var(--accent-2);font-family:var(--mono);font-weight:600;font-size:14px;display:grid;place-items:center}
+  hr{border:0;border-top:1px solid var(--border);margin:0}
+  .kbd{font-family:var(--mono);font-size:.8em;background:var(--surface-2);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 6px}
+  /* Mobile */
+  .mobilebar{display:none}
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+    aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}
+    nav.toc{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+    main{padding:30px 22px 90px}
+    .cols-2,.cols-3{grid-template-columns:1fr}
+    figure{padding:14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside>
+    <div class="brand">
+      <div class="mark"><span></span></div>
+      <div><b>OpenDesk</b><small>manual do projeto</small></div>
+    </div>
+    <nav class="toc" id="toc">
+      <a href="#visao"><span class="n">01</span>Visão geral</a>
+      <a href="#fluxo"><span class="n">02</span>Como tudo se conecta</a>
+      <a href="#mapa"><span class="n">03</span>Mapa do projeto</a>
+      <a href="#transversais"><span class="n">04</span>Sistemas transversais</a>
+      <a href="#trilha"><span class="n">05</span>Trilha de estudo</a>
+      <a href="#banco"><span class="n">06</span>Banco de dados (do zero)</a>
+      <a href="#docker"><span class="n">07</span>Docker (do zero)</a>
+      <a href="#cookbook"><span class="n">08</span>Cookbook: como faço…</a>
+      <a href="#glossario"><span class="n">09</span>Glossário</a>
+    </nav>
+    <button class="themetog" id="themetog">◐ tema</button>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <div class="eyebrow">Guia de domínio</div>
+      <h1>Dominar o OpenDesk, do clique ao banco</h1>
+      <p class="lede">Um portal full-stack com <strong>57 páginas</strong>, <strong>22 routers</strong>,
+      <strong>108 tabelas</strong> e integrações reais. Este manual mostra como as peças se ligam,
+      o que editar em cada arquivo, e ensina banco de dados e Docker partindo do zero.</p>
+    </div>
+
+    <!-- 01 -->
+    <section id="visao">
+      <h2><span class="n">01</span> Visão geral</h2>
+      <p class="prose-narrow">OpenDesk é um <strong>monólito modular</strong>: um único servidor
+      Node/Express serve tanto a API quanto o front React já buildado. Não há microserviços —
+      há <em>módulos</em> (Suporte, Projetos, Almoxarifado, Gestão de Negócios, Indicadores,
+      Administração) que compartilham a mesma base de código, o mesmo banco e a mesma camada de permissões.</p>
+
+      <p class="prose-narrow">Ao redor do portal existem serviços e agentes de apoio. Este é o mapa mental
+      que você deve carregar antes de abrir qualquer arquivo:</p>
+
+      <figure>
+        <svg viewBox="0 0 860 430" role="img" aria-label="Arquitetura: navegador fala com o portal; o portal usa o banco opendesk e a query-api; a query-api lê o banco demo_erp; agentes de borda reportam ao portal">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+            </marker>
+            <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <!-- browser -->
+          <rect x="24" y="176" width="120" height="66" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+          <text x="84" y="203" text-anchor="middle" font-family="var(--sans)" font-size="14" font-weight="600" fill="currentColor">Navegador</text>
+          <text x="84" y="222" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--muted)">React SPA</text>
+          <!-- portal -->
+          <rect x="252" y="150" width="180" height="118" rx="12" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="342" y="182" text-anchor="middle" font-family="var(--sans)" font-size="15" font-weight="700" fill="var(--accent-2)">Portal</text>
+          <text x="342" y="202" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--accent-2)">Express + tRPC</text>
+          <text x="342" y="220" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--accent-2)">serve o React</text>
+          <text x="342" y="245" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">:3000</text>
+          <!-- db opendesk -->
+          <g>
+            <path d="M540,120 a44,13 0 0 1 88,0 v40 a44,13 0 0 1 -88,0 z" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+            <ellipse cx="584" cy="120" rx="44" ry="13" fill="var(--surface)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="584" y="150" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="currentColor">opendesk</text>
+          </g>
+          <!-- query-api -->
+          <rect x="516" y="212" width="136" height="60" rx="11" fill="var(--surface)" stroke="currentColor" stroke-width="1.5"/>
+          <text x="584" y="238" text-anchor="middle" font-family="var(--sans)" font-size="13" font-weight="600" fill="currentColor">query-api</text>
+          <text x="584" y="256" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">:4000</text>
+          <!-- db demo_erp -->
+          <g>
+            <path d="M736,222 a40,12 0 0 1 80,0 v36 a40,12 0 0 1 -80,0 z" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+            <ellipse cx="776" cy="222" rx="40" ry="12" fill="var(--surface)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="776" y="250" text-anchor="middle" font-family="var(--mono)" font-size="10.5" font-weight="600" fill="currentColor">demo_erp</text>
+          </g>
+          <!-- agents -->
+          <rect x="252" y="330" width="180" height="52" rx="10" fill="var(--surface)" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="342" y="352" text-anchor="middle" font-family="var(--sans)" font-size="12.5" font-weight="600" fill="currentColor">Agentes de borda</text>
+          <text x="342" y="369" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">coletor · wa-gateway</text>
+          <!-- arrows -->
+          <line x1="146" y1="209" x2="248" y2="209" stroke="var(--accent)" stroke-width="2" marker-end="url(#ahb)"/>
+          <text x="197" y="200" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="var(--accent-2)">HTTPS</text>
+          <line x1="434" y1="180" x2="536" y2="150" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="487" y="156" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">SQL</text>
+          <line x1="434" y1="238" x2="512" y2="240" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="472" y="232" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">chave+params</text>
+          <line x1="652" y1="242" x2="732" y2="240" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="692" y="232" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">SQL</text>
+          <line x1="342" y1="330" x2="342" y2="272" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="392" y="306" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">snapshot/heartbeat</text>
+        </svg>
+        <figcaption>O portal é o cérebro: fala com o banco <code>opendesk</code> direto (via Drizzle) e
+        com a <code>query-api</code> por HTTP para dados "de ERP". Os agentes rodam separados e só
+        <em>reportam</em> ao portal — toda regra de negócio mora no portal.</figcaption>
+      </figure>
+
+      <div class="grid cols-3">
+        <div class="card"><span class="tag">frontend</span><h4>React 19 + Vite</h4><p>SPA em <span class="path">client/</span>. Roteamento com Wouter, dados via tRPC + TanStack Query.</p></div>
+        <div class="card"><span class="tag">backend</span><h4>Express + tRPC</h4><p>API tipada em <span class="path">server/</span>. Um router por módulo, tudo montado em <code>/api/trpc</code>.</p></div>
+        <div class="card"><span class="tag">dados</span><h4>MySQL + Drizzle</h4><p>Schema em <span class="path">drizzle/schema.ts</span>; queries em <span class="path">server/db.ts</span> e <span class="path">server/db/*</span>.</p></div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="fluxo">
+      <h2><span class="n">02</span> Como tudo se conecta</h2>
+      <p class="prose-narrow">A pergunta mais importante para dominar o projeto: <strong>o que acontece
+      quando você clica em algo na tela?</strong> Siga o caminho — cada seta é um arquivo que você pode abrir.</p>
+
+      <figure>
+        <svg viewBox="0 0 900 250" role="img" aria-label="Ciclo de uma requisição: componente React chama um hook tRPC, que vai por HTTP a /api/trpc no Express, cai no router do módulo, passa por requirePermission, chama db.ts com Drizzle e retorna do MySQL">
+          <defs>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+          </defs>
+          <!-- lane labels -->
+          <text x="150" y="26" text-anchor="middle" font-family="var(--mono)" font-size="11" letter-spacing=".1em" fill="var(--muted)">CLIENT</text>
+          <text x="620" y="26" text-anchor="middle" font-family="var(--mono)" font-size="11" letter-spacing=".1em" fill="var(--muted)">SERVER</text>
+          <line x1="300" y1="40" x2="300" y2="230" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <!-- boxes -->
+          <g font-family="var(--sans)" font-size="12.5" font-weight="600">
+            <rect x="24" y="90" width="120" height="60" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="84" y="115" text-anchor="middle" fill="currentColor">Página .tsx</text>
+            <text x="84" y="133" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">client/src/pages</text>
+
+            <rect x="168" y="90" width="120" height="60" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="228" y="112" text-anchor="middle" fill="var(--accent-2)">hook tRPC</text>
+            <text x="228" y="130" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--accent-2)">trpc.x.y.useQuery</text>
+
+            <rect x="318" y="90" width="120" height="60" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="378" y="112" text-anchor="middle" fill="currentColor">Express</text>
+            <text x="378" y="130" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--muted)">/api/trpc</text>
+
+            <rect x="462" y="90" width="120" height="60" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="522" y="108" text-anchor="middle" fill="currentColor">router</text>
+            <text x="522" y="125" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="var(--muted)">server/routers</text>
+            <text x="522" y="138" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="var(--muted)">+permissão</text>
+
+            <rect x="606" y="90" width="120" height="60" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="666" y="112" text-anchor="middle" fill="currentColor">db.ts</text>
+            <text x="666" y="130" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--muted)">Drizzle</text>
+
+            <path d="M750,90 a30,10 0 0 1 60,0 v40 a30,10 0 0 1 -60,0 z" fill="var(--surface)" stroke="currentColor" stroke-width="1.5"/>
+            <ellipse cx="780" cy="90" rx="30" ry="10" fill="var(--surface)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="780" y="122" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="currentColor">MySQL</text>
+          </g>
+          <!-- arrows forward -->
+          <g stroke="var(--accent)" stroke-width="2" marker-end="url(#a2)" fill="none">
+            <line x1="144" y1="120" x2="166" y2="120"/>
+            <line x1="288" y1="120" x2="316" y2="120"/>
+            <line x1="438" y1="120" x2="460" y2="120"/>
+            <line x1="582" y1="120" x2="604" y2="120"/>
+            <line x1="726" y1="120" x2="748" y2="120"/>
+          </g>
+          <text x="228" y="176" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">HTTP + superjson</text>
+          <text x="522" y="176" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">ctx.user (cookie JWT)</text>
+          <text x="666" y="176" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">SQL tipado</text>
+          <!-- return -->
+          <path d="M780,150 q0,60 -696,60 l-60,0" stroke="currentColor" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+          <text x="430" y="226" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--muted)">resposta tipada volta pelo mesmo caminho → React re-renderiza</text>
+        </svg>
+        <figcaption>Uma leitura (query) ou escrita (mutation) do portal. O tipo do dado é o mesmo do
+        clique até o banco — mudou o router no server, o autocompletar muda na página. É o superpoder do tRPC.</figcaption>
+      </figure>
+
+      <h3>Os pontos de entrada (abra estes primeiro)</h3>
+      <div class="tbl"><table>
+        <tr><th>Arquivo</th><th>O que faz</th></tr>
+        <tr><td><code>client/src/main.tsx</code></td><td>Raiz do front. Cria o cliente tRPC (aponta pra <code>/api/trpc</code>, usa superjson, manda cookie) e envolve o <code>&lt;App/&gt;</code> nos providers.</td></tr>
+        <tr><td><code>client/src/App.tsx</code></td><td>Todas as rotas (Wouter). Cada rota é embrulhada por <code>ProtectedRoute</code> (exige login) e <code>PermissionGuard</code> (exige permissão do módulo).</td></tr>
+        <tr><td><code>client/src/lib/trpc.ts</code></td><td>O objeto <code>trpc</code> tipado que as páginas importam para chamar o backend.</td></tr>
+        <tr><td><code>server/_core/index.ts</code></td><td>Sobe o Express: body parser, storage, OAuth, monta o tRPC em <code>/api/trpc</code>, serve o React (Vite em dev, estático em prod) e registra as "pontes" dos agentes + rotas agendadas.</td></tr>
+        <tr><td><code>server/routers.ts</code></td><td>O <code>appRouter</code>: junta os ~25 routers de módulo num só. É o índice do backend.</td></tr>
+        <tr><td><code>server/_core/trpc.ts</code></td><td>Define <code>publicProcedure</code>, <code>protectedProcedure</code> e o <code>router()</code>. Aqui mora a checagem "tem sessão?".</td></tr>
+        <tr><td><code>server/_core/context.ts</code></td><td>Lê o cookie de sessão (JWT) em cada request e monta <code>ctx.user</code> — a identidade que os routers usam.</td></tr>
+      </table></div>
+    </section>
+
+    <!-- 03 -->
+    <section id="mapa">
+      <h2><span class="n">03</span> Mapa do projeto</h2>
+      <p class="prose-narrow">A regra de ouro: <strong>quase todo módulo aparece em 3 lugares</strong> —
+      uma <em>página</em> em <span class="path">client/src/pages</span>, um <em>router</em> em
+      <span class="path">server/routers</span>, e (se persiste dados) <em>tabelas</em> em
+      <span class="path">drizzle/schema.ts</span>. Aprenda a pular entre esses três e você anda por qualquer feature.</p>
+
+      <h3>Pasta por pasta</h3>
+      <div class="tbl"><table>
+        <tr><th>Pasta</th><th>Contém</th><th>Comece por</th></tr>
+        <tr><td><code>client/</code></td><td>O front React. <code>src/pages</code> (57 telas), <code>src/components</code> (83 reutilizáveis, ex.: <code>PanelHeader</code>, <code>KpiCard</code>, <code>DataTablePagination</code>), <code>src/lib</code> (trpc, utils), <code>src/_core</code> (auth/hooks), <code>index.css</code> (tema Tailwind v4).</td><td><code>App.tsx</code> → uma página simples (ex.: <code>pages/TicketsList.tsx</code>? veja Suporte)</td></tr>
+        <tr><td><code>server/</code></td><td>A API. <code>routers/</code> (um por módulo), <code>db.ts</code> + <code>db/*</code> (queries), <code>erpApi.ts</code>/<code>erpQueries.ts</code> (integração), <code>scheduled*.ts</code> (jobs), <code>_core/</code> (tRPC, contexto, cookies, env).</td><td><code>routers.ts</code> → <code>routers/rupturas.ts</code></td></tr>
+        <tr><td><code>shared/</code></td><td>Código usado por client E server (13 arquivos). O mais importante: <code>permissions.ts</code> (o mapa de módulos e permissões). Também regras "puras" reusadas (ex.: <code>monitorArquivos.ts</code>).</td><td><code>permissions.ts</code></td></tr>
+        <tr><td><code>drizzle/</code></td><td><code>schema.ts</code> = a <strong>fonte da verdade</strong> das 108 tabelas (o que existe no banco).</td><td><code>schema.ts</code> (busque <code>sys_usuarios</code>)</td></tr>
+        <tr><td><code>services/</code></td><td>Serviços independentes: <code>query-api</code> (API de queries nomeadas + UI) e <code>demo-erp</code> (SQL que popula o ERP fake).</td><td><code>query-api/src/index.js</code></td></tr>
+        <tr><td><code>connector/</code></td><td>Agentes de borda (rodam fora do portal): <code>monitor-arquivos</code> (coletor), <code>monitor-wa-gateway</code> (WhatsApp), etc.</td><td><code>monitor-arquivos/index.mjs</code></td></tr>
+        <tr><td><code>scripts/</code></td><td>Utilitários. <code>bootstrap/schema.sql</code> + <code>seed.sql</code> montam o banco do zero.</td><td>—</td></tr>
+      </table></div>
+
+      <div class="callout tip"><span class="lbl">Técnica de leitura</span>
+      <p>Escolha UMA feature simples (ex.: a lista de chamados). Abra a página, ache o
+      <code>trpc.suporte…useQuery(...)</code>, pule pro router correspondente em <code>server/routers</code>,
+      veja qual função de <code>server/db.ts</code> ele chama, e qual tabela do <code>schema.ts</code> ela toca.
+      Fez isso 3 vezes e o padrão inteiro "clica".</p></div>
+    </section>
+
+    <!-- 04 -->
+    <section id="transversais">
+      <h2><span class="n">04</span> Sistemas transversais</h2>
+      <p class="prose-narrow">Quatro mecanismos aparecem em <em>todo</em> módulo. Entendê-los é entender 80% do projeto.</p>
+
+      <h3>1 · Autenticação &amp; sessão</h3>
+      <p class="prose-narrow">Login em <code>server/routers.ts</code> (<code>auth.login</code>) confere a senha com bcrypt e
+      grava um <strong>cookie de sessão</strong> assinado (JWT via <code>jose</code>). A cada request,
+      <code>server/_core/context.ts</code> lê esse cookie e coloca o usuário em <code>ctx.user</code>.
+      No front, <code>client/src/_core/hooks/useAuth.ts</code> sabe quem está logado.</p>
+
+      <h3>2 · Permissões (o coração)</h3>
+      <p class="prose-narrow"><code>shared/permissions.ts</code> tem uma <strong>árvore única</strong>
+      (<code>PERMISSION_TREE</code>) — dela saem: a tela de atribuir permissões, a visibilidade dos cards
+      no hub, e as checagens no servidor. <code>admin</code> pula todas as checagens.</p>
+      <div class="tbl"><table>
+        <tr><th>Camada</th><th>Arquivo</th><th>Papel</th></tr>
+        <tr><td>Definição</td><td><code>shared/permissions.ts</code></td><td><code>MODULES</code>, <code>ACTIONS</code>, <code>PERMISSION_TREE</code></td></tr>
+        <tr><td>Front (esconde)</td><td><code>components/PermissionGuard.tsx</code></td><td>Não renderiza a página se faltar permissão</td></tr>
+        <tr><td>Server (bloqueia)</td><td><code>server/permissionMiddleware.ts</code></td><td><code>requirePermission(MODULES.X, ACTIONS.Y)</code> no router</td></tr>
+      </table></div>
+
+      <h3>3 · Camada de integração (dados de "ERP")</h3>
+      <p class="prose-narrow">Três camadas, nunca copie a chamada de query em vários módulos:</p>
+      <ul>
+        <li><code>server/erpApi.ts</code> — <strong>transporte</strong>: login, token, <code>executarQuery(chave, params)</code>.</li>
+        <li><code>server/erpQueries.ts</code> — <strong>uma função por query</strong> nomeada, já normalizando as colunas.</li>
+        <li>o módulo — só mapeia pro seu domínio e persiste.</li>
+      </ul>
+
+      <h3>4 · Acesso ao banco</h3>
+      <p class="prose-narrow"><code>server/db.ts</code> (e <code>server/db/*.ts</code> por módulo) concentram as queries
+      Drizzle. Ninguém escreve SQL cru espalhado — passa por aqui. A conexão fixa <code>timezone=Z</code> (UTC);
+      a exibição em horário local fica na apresentação.</p>
+    </section>
+
+    <!-- 05 -->
+    <section id="trilha">
+      <h2><span class="n">05</span> Trilha de estudo</h2>
+      <p class="prose-narrow">Ordem sugerida para sair do zero ao domínio, sem se perder nos 600 arquivos.</p>
+      <ol class="steps">
+        <li><strong>Rode o projeto</strong> (seção Docker abaixo) e navegue como admin. Ver funcionando primeiro dá contexto pra tudo.</li>
+        <li><strong>Leia o fluxo</strong> (seção 02): abra <code>main.tsx</code>, <code>App.tsx</code>, <code>server/_core/index.ts</code> e <code>server/routers.ts</code>. Não precisa entender tudo — só o formato.</li>
+        <li><strong>Siga UMA feature ponta a ponta</strong>: página → hook tRPC → router → <code>db.ts</code> → tabela. Recomendo <em>Rupturas</em> (tem os 3 lados claros).</li>
+        <li><strong>Estude <code>shared/permissions.ts</code></strong>: entenda a <code>PERMISSION_TREE</code> e como um módulo "aparece". É o esqueleto do sistema.</li>
+        <li><strong>Abra o banco</strong> (seção 06) e cruze o que viu no código com as tabelas reais (<code>SHOW TABLES</code>, <code>SELECT</code>).</li>
+        <li><strong>Faça uma mudança pequena</strong> guiada pelo Cookbook (seção 08): mude um texto, adicione uma coluna, crie um endpoint. Aprender editando fixa.</li>
+        <li><strong>Explore os componentes reutilizáveis</strong> (<code>PanelHeader</code>, <code>KpiCard</code>, <code>DataTablePagination</code>): são os "tijolos" de toda tela nova.</li>
+      </ol>
+    </section>
+
+    <!-- 06 -->
+    <section id="banco">
+      <h2><span class="n">06</span> Banco de dados (do zero)</h2>
+      <p class="prose-narrow"><strong>O que é:</strong> o MySQL é um servidor que guarda os dados em
+      <em>tabelas</em> (como planilhas): cada tabela tem colunas (campos) e linhas (registros). Você
+      conversa com ele em <strong>SQL</strong>. O portal tem <strong>dois bancos</strong> no mesmo servidor:</p>
+      <div class="grid cols-2">
+        <div class="card"><span class="tag">portal</span><h4>opendesk</h4><p>Os dados do portal: usuários, chamados, projetos, inventário, configs. 108 tabelas.</p></div>
+        <div class="card"><span class="tag">ERP fake</span><h4>demo_erp</h4><p>Um "ERP de cliente" sintético que a <code>query-api</code> consulta para os painéis (vendas, estoque, pedidos).</p></div>
+      </div>
+
+      <h3>Jeito 1 — visual (recomendado para começar)</h3>
+      <p class="prose-narrow">Instale um cliente gráfico gratuito — <strong>DBeaver</strong> (ou TablePlus / MySQL Workbench) —
+      e conecte com estes dados. Você vê as tabelas numa árvore, clica e navega as linhas como numa planilha.</p>
+      <div class="tbl"><table>
+        <tr><th>Campo</th><th>Valor</th></tr>
+        <tr><td>Host</td><td><code>127.0.0.1</code></td></tr>
+        <tr><td>Porta</td><td><code>3306</code></td></tr>
+        <tr><td>Usuário</td><td><code>root</code></td></tr>
+        <tr><td>Senha</td><td><code>dev</code></td></tr>
+        <tr><td>Banco</td><td><code>opendesk</code> (troque para <code>demo_erp</code> quando quiser o ERP)</td></tr>
+      </table></div>
+
+      <h3>Jeito 2 — linha de comando (dentro do container)</h3>
+      <p class="prose-narrow">Sem instalar nada: entre no MySQL que já roda no Docker. O <span class="kbd">-it</span> abre um terminal interativo; o charset garante acentos certos.</p>
+      <div class="code"><div class="bar"><span>bash</span><button>copiar</button></div><pre><span class="c"># abrir o cliente MySQL dentro do container, já no banco opendesk</span>
+docker exec -it opendesk-dev-mysql mysql --default-character-set=utf8mb4 -uroot -pdev opendesk</pre></div>
+
+      <h3>SQL essencial (navegar, adicionar, editar)</h3>
+      <div class="code"><div class="bar"><span>sql</span><button>copiar</button></div><pre><span class="c">-- que tabelas existem?</span>
+SHOW TABLES;
+<span class="c">-- quais colunas tem uma tabela?</span>
+DESCRIBE sys_usuarios;
+<span class="c">-- LER: ver 10 usuários (só algumas colunas)</span>
+SELECT id, name, email, role FROM sys_usuarios LIMIT 10;
+<span class="c">-- FILTRAR + ORDENAR</span>
+SELECT * FROM suporte_chamados WHERE status = 'Novos' ORDER BY createdAt DESC;
+<span class="c">-- ADICIONAR uma linha</span>
+INSERT INTO sys_departamentos (name) VALUES ('Marketing');
+<span class="c">-- EDITAR</span>
+UPDATE sys_usuarios SET role = 'admin' WHERE email = 'admin@opendesk.local';
+<span class="c">-- APAGAR (cuidado: sempre com WHERE!)</span>
+DELETE FROM sys_departamentos WHERE name = 'Marketing';
+<span class="c">-- CRUZAR tabelas (JOIN): chamados com o nome do departamento</span>
+SELECT c.title, d.name AS depto
+FROM suporte_chamados c
+LEFT JOIN sys_departamentos d ON d.id = c.departmentId
+LIMIT 20;</pre></div>
+
+      <div class="callout note"><span class="lbl">Tabelas para conhecer</span>
+      <p><code>sys_usuarios</code>, <code>sys_departamentos</code>, <code>sys_grupos_permissao</code> (base);
+      <code>suporte_chamados</code> (Suporte); <code>projetos_base</code> (Projetos);
+      <code>ti_inventario_itens</code> (Almoxarifado); <code>superestocados_*</code>, <code>rupturas_*</code>,
+      <code>validades_curtas_itens</code> (Estoque); <code>monarq_*</code> (Monitor de Integrações).
+      Os prefixos indicam o submódulo.</p></div>
+
+      <h3>Como o schema é definido e alterado</h3>
+      <p class="prose-narrow">A forma das tabelas vive em <code>drizzle/schema.ts</code> (fonte da verdade).
+      <strong>Não</strong> se usa <code>drizzle-kit generate/migrate</code> aqui (está dessincronizado).
+      Para mudar o schema, roda-se <strong>SQL idempotente</strong> à mão (ex.: <code>ALTER TABLE … ADD COLUMN …</code>)
+      e atualiza-se o <code>schema.ts</code> + o dump <code>scripts/bootstrap/schema.sql</code>. Veja o Cookbook.</p>
+    </section>
+
+    <!-- 07 -->
+    <section id="docker">
+      <h2><span class="n">07</span> Docker (do zero)</h2>
+      <p class="prose-narrow">Docker empacota programas com tudo que precisam, para rodarem igual em qualquer máquina. Três palavras:</p>
+      <div class="grid cols-3">
+        <div class="card"><h4>Imagem</h4><p>O "molde" — um pacote pronto (ex.: <code>mysql:8</code>). Você baixa/builda uma vez.</p></div>
+        <div class="card"><h4>Container</h4><p>Uma imagem <em>rodando</em>. Descartável: pode parar/apagar e criar de novo.</p></div>
+        <div class="card"><h4>Volume</h4><p>Onde os dados <em>persistem</em> mesmo se o container morre (é onde o MySQL guarda o banco).</p></div>
+      </div>
+
+      <p class="prose-narrow">O arquivo <code>docker-compose.yml</code> descreve todos os serviços do OpenDesk de uma vez.
+      Ele sobe: <code>db</code> (MySQL), <code>query-api</code>, <code>portal</code> e um <code>sync-init</code> que popula os painéis.</p>
+
+      <h3>Comandos que você vai usar toda hora</h3>
+      <div class="code"><div class="bar"><span>bash — na raiz do projeto</span><button>copiar</button></div><pre>docker compose up -d        <span class="c"># sobe tudo em segundo plano</span>
+docker compose ps           <span class="c"># o que está rodando</span>
+docker compose logs -f portal   <span class="c"># acompanha os logs de um serviço</span>
+docker compose down         <span class="c"># para tudo (MANTÉM os dados)</span>
+docker compose down -v      <span class="c"># para E APAGA os dados (re-bootstrap no próximo up)</span>
+docker compose up -d --build portal   <span class="c"># rebuilda só o portal após mexer no código</span></pre></div>
+
+      <h3>Espiar / navegar os dados dentro do container</h3>
+      <div class="code"><div class="bar"><span>bash</span><button>copiar</button></div><pre><span class="c"># um terminal shell dentro do container do banco</span>
+docker exec -it opendesk-dev-mysql bash
+<span class="c"># ou direto no MySQL (como na seção 06)</span>
+docker exec -it opendesk-dev-mysql mysql -uroot -pdev opendesk
+<span class="c"># ver containers e volumes do sistema</span>
+docker ps
+docker volume ls</pre></div>
+
+      <div class="callout warn"><span class="lbl">Windows — PATH do Docker</span>
+      <p>Se o terminal disser <code>docker: command not found</code>, o Docker Desktop precisa estar
+      <strong>aberto</strong> (baleia verde) e, no Git Bash, adicione ao PATH:
+      <code>export PATH="$PATH:/c/Program Files/Docker/Docker/resources/bin"</code>.</p></div>
+
+      <div class="callout note"><span class="lbl">Como o bootstrap funciona</span>
+      <p>Na <strong>primeira</strong> vez que o <code>db</code> sobe com o volume vazio, o MySQL roda sozinho
+      os scripts em <code>scripts/bootstrap/</code> e <code>services/demo-erp/</code> (schema + admin + dados de demo).
+      Depois disso ele não roda de novo — por isso <code>down -v</code> (que apaga o volume) é o jeito de
+      "começar do zero".</p></div>
+    </section>
+
+    <!-- 08 -->
+    <section id="cookbook">
+      <h2><span class="n">08</span> Cookbook: como faço para…</h2>
+
+      <h3>…rodar em modo de desenvolvimento (com hot reload)</h3>
+      <div class="code"><div class="bar"><span>bash</span><button>copiar</button></div><pre>docker compose up -d db     <span class="c"># só o banco no Docker</span>
+pnpm install                <span class="c"># uma vez</span>
+pnpm dev                    <span class="c"># portal em http://localhost:3000 (edita e recarrega)</span></pre></div>
+
+      <h3>…mudar um texto/label na tela</h3>
+      <p class="prose-narrow">Procure o texto direto em <code>client/src</code> (ex.: no VS Code, <span class="kbd">Ctrl+Shift+F</span>).
+      Edite o <code>.tsx</code>, salve — com <code>pnpm dev</code> a tela recarrega sozinha.</p>
+
+      <h3>…adicionar uma coluna numa tabela</h3>
+      <ol class="steps">
+        <li>Rode o <code>ALTER TABLE</code> no banco (seção 06). Ex.: <code>ALTER TABLE sys_usuarios ADD COLUMN telefone VARCHAR(20) NULL;</code></li>
+        <li>Reflita a coluna em <code>drizzle/schema.ts</code> (na definição da tabela) para o TypeScript enxergar.</li>
+        <li>Atualize o dump: regenere <code>scripts/bootstrap/schema.sql</code> (assim quem clonar já nasce com a coluna).</li>
+      </ol>
+
+      <h3>…criar um endpoint de backend (tRPC)</h3>
+      <ol class="steps">
+        <li>No router do módulo (<code>server/routers/x.ts</code>), adicione uma <code>query</code>/<code>mutation</code>, protegida com <code>requirePermission(MODULES.X, ACTIONS.Y)</code>.</li>
+        <li>Chame do front com <code>trpc.x.novoEndpoint.useQuery(...)</code> — o tipo aparece sozinho.</li>
+      </ol>
+
+      <h3>…adicionar uma página/módulo novo</h3>
+      <p class="prose-narrow">Siga o <strong>checklist de permissão</strong> do <code>CLAUDE.md</code> (7 passos):
+      chave em <code>MODULES</code> → nó na <code>PERMISSION_TREE</code> → rótulo no <code>permissionMiddleware</code>
+      → rota no <code>App.tsx</code> com <code>PermissionGuard</code> → card no hub → router com <code>requirePermission</code>.</p>
+
+      <h3>…recomeçar o banco do zero</h3>
+      <div class="code"><div class="bar"><span>bash</span><button>copiar</button></div><pre>docker compose down -v &amp;&amp; docker compose up -d   <span class="c"># apaga e re-bootstrapa</span></pre></div>
+
+      <h3>…debugar</h3>
+      <p class="prose-narrow"><strong>Front:</strong> Console e aba Network do navegador (veja a chamada a <code>/api/trpc</code>).
+      <strong>Back:</strong> os <code>console.log</code> aparecem no terminal do <code>pnpm dev</code> (ou <code>docker compose logs -f portal</code>).
+      Antes de fechar: <code>pnpm check</code> (tipos) e <code>pnpm test</code>.</p>
+    </section>
+
+    <!-- 09 -->
+    <section id="glossario">
+      <h2><span class="n">09</span> Glossário</h2>
+      <div class="tbl"><table>
+        <tr><th>Termo</th><th>É…</th></tr>
+        <tr><td><strong>tRPC</strong></td><td>Jeito de chamar o backend com <em>tipos compartilhados</em> — a função no server vira uma função tipada no client, sem escrever URLs/JSON à mão.</td></tr>
+        <tr><td><strong>ORM / Drizzle</strong></td><td>Camada que deixa você consultar o banco escrevendo TypeScript em vez de SQL cru. <em>Drizzle</em> é o ORM usado aqui.</td></tr>
+        <tr><td><strong>superjson</strong></td><td>Formato que preserva tipos ricos (datas, etc.) entre client e server.</td></tr>
+        <tr><td><strong>Vite / HMR</strong></td><td>Ferramenta de build do front. <em>HMR</em> = a tela atualiza sozinha ao salvar, sem recarregar tudo.</td></tr>
+        <tr><td><strong>JWT / cookie de sessão</strong></td><td>Um "crachá" assinado guardado no cookie que prova quem você é a cada request.</td></tr>
+        <tr><td><strong>SPA</strong></td><td><em>Single Page Application</em> — o React troca de tela sem recarregar a página inteira.</td></tr>
+        <tr><td><strong>Imagem / Container / Volume</strong></td><td>Molde / molde rodando / lugar onde os dados persistem (ver seção 07).</td></tr>
+        <tr><td><strong>bind mount</strong></td><td>"Espelhar" uma pasta do seu PC dentro do container (é como os scripts de bootstrap entram no MySQL).</td></tr>
+        <tr><td><strong>idempotente</strong></td><td>Pode rodar várias vezes sem estragar — rodar de novo dá o mesmo resultado (ex.: <code>INSERT IGNORE</code>).</td></tr>
+      </table></div>
+      <p class="prose-narrow" style="margin-top:28px;color:var(--muted)">Referências no repositório:
+      <code>README.md</code> (visão + como subir), <code>CLAUDE.md</code> (convenções para editar),
+      <code>docs/produto-opendesk.md</code> (arquitetura + runbook completo).</p>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Theme toggle (respeita o sistema por padrão; clique alterna e "trava")
+  var tog = document.getElementById('themetog');
+  tog.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = cur ? (cur === 'dark' ? 'light' : 'dark') : (sysDark ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', next);
+  });
+  // Copiar botões de código
+  document.querySelectorAll('.code button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var pre = b.closest('.code').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(function(){
+        var t = b.textContent; b.textContent = 'copiado ✓';
+        setTimeout(function(){ b.textContent = t; }, 1400);
+      });
+    });
+  });
+  // Scrollspy: destaca a seção ativa no índice
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(a){ a.classList.remove('active'); });
+        if(map[e.target.id]) map[e.target.id].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('section[id]').forEach(function(s){ obs.observe(s); });
+</script>
+</body>
+</html>

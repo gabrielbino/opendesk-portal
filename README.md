@@ -91,6 +91,10 @@ cd services/query-api && npm run dev   # em outro terminal (porta 4000)
 Detalhes em [docs/produto-opendesk.md](docs/produto-opendesk.md) (arquitetura, contrato da query-api,
 credenciais e fases do projeto).
 
+📘 **Guia para dominar o projeto:** abra [docs/manual-opendesk.html](docs/manual-opendesk.html) no navegador
+(duplo-clique) — mapa arquivo-por-arquivo, ciclo de uma requisição, trilha de estudo e banco de dados +
+Docker do zero.
+
 ## 🧩 Módulos
 
 - **Suporte** — chamados com SLA, kanban, avaliações, chat.

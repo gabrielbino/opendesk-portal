@@ -172,7 +172,7 @@ export default function PortalDashboard() {
                   Módulos
                 </h2>
                 <span className="text-xs text-muted-foreground">
-                  {filteredItems.length} disponível{filteredItems.length !== 1 ? 'is' : ''}
+                  {filteredItems.length} {filteredItems.length === 1 ? 'disponível' : 'disponíveis'}
                 </span>
               </div>
 

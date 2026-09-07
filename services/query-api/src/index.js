@@ -36,7 +36,14 @@ app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
 // ─────────────────────────── Banco-alvo + registro ───────────────────────────
-const pool = mysql.createPool({ uri: TARGET_DB_URL, connectionLimit: 8, dateStrings: true });
+// TLS: bancos gerenciados (ex.: TiDB Cloud) exigem. Automático quando o host é TiDB, ou com DB_SSL=true.
+const useSsl = process.env.DB_SSL === "true" || /tidbcloud\.com/i.test(TARGET_DB_URL);
+const pool = mysql.createPool({
+  uri: TARGET_DB_URL,
+  connectionLimit: 8,
+  dateStrings: true,
+  ...(useSsl ? { ssl: { minVersion: "TLSv1.2" } } : {}),
+});
 
 async function ensureRegistry() {
   await pool.query(`

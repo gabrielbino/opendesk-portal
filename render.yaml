@@ -1,0 +1,56 @@
+# Render Blueprint — sobe portal + query-api (Docker) apontando para um MySQL externo (TiDB Cloud).
+# Passo a passo em deploy/render.md. Campos "sync: false" você preenche no painel do Render.
+services:
+  - type: web
+    name: opendesk-query-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./services/query-api/Dockerfile
+    dockerContext: ./services/query-api
+    envVars:
+      - key: QAPI_USER
+        value: portal
+      - key: QAPI_PASSWORD
+        value: portal-dev
+      - key: QAPI_ADMIN_USER
+        value: admin
+      - key: QAPI_ADMIN_PASSWORD
+        generateValue: true          # senha da UI admin (a UI fica pública — não use admin/admin)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_SSL
+        value: "true"
+      - key: TARGET_DB_URL
+        sync: false                  # URL do TiDB apontando para o banco demo_erp
+
+  - type: web
+    name: opendesk-portal
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_SSL
+        value: "true"
+      - key: STORAGE_DRIVER
+        value: local
+      - key: LOCAL_STORAGE_DIR
+        value: /tmp/uploads
+      - key: VITE_APP_ID
+        value: opendesk-portal
+      - key: ERP_API_USER
+        value: portal
+      - key: ERP_API_SENHA
+        value: portal-dev
+      - key: CRON_SHARED_TOKEN
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false                  # URL do TiDB apontando para o banco opendesk
+      - key: ERP_API_URL
+        sync: false                  # URL pública do serviço opendesk-query-api (https://…onrender.com)
+      - key: PUBLIC_BASE_URL
+        sync: false                  # URL pública deste serviço (portal), após criado

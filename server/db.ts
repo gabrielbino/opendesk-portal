@@ -1,5 +1,6 @@
 import { eq, desc, asc, and, or, like, sql, gte, gt, lt, lte, ne, isNull, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import { 
   InsertUser, users, User,
   tickets, InsertTicket, Ticket,
@@ -48,7 +49,12 @@ export async function getDb() {
       const connStr = /[?&]timezone=/i.test(base)
         ? base
         : base + (base.includes("?") ? "&" : "?") + "timezone=Z";
-      _db = drizzle(connStr);
+      // TLS: obrigatório em bancos gerenciados (ex.: TiDB Cloud). Ativa automático quando o host
+      // é TiDB, ou explicitamente com DATABASE_SSL=true. Usa a cadeia de CAs pública do Node.
+      const useSsl = process.env.DATABASE_SSL === "true" || /tidbcloud\.com/i.test(base);
+      _db = useSsl
+        ? drizzle(mysql.createPool({ uri: connStr, ssl: { minVersion: "TLSv1.2" } }))
+        : drizzle(connStr);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
